@@ -21,6 +21,7 @@ extra-source-files: CHANGELOG.md
 
 library
   exposed-modules:
+    Notion.Config,
     Notion.GetUploadFileUrl
     Notion.GetUserAnalyticsSettings
     Notion.SubmitTransaction
