@@ -2,6 +2,7 @@
 
 module Main where
 
+import Notion.Config (Config(..), getConfig, defaultConfigFile)
 import           Control.Monad            (forM_)
 import           Data.Char                (isHexDigit)
 import           Data.ConfigFile          (ConfigParser (..), emptyCP, get,

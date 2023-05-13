@@ -4,7 +4,7 @@
 
 module Notion.SubmitTransaction where
 
-import Main (Config)
+import Notion.Config (Config(..))
 import           Control.Exception.Safe             (MonadThrow)
 import           Control.Monad.IO.Class             (MonadIO, liftIO)
 import           Data.Aeson                         (Options (..),

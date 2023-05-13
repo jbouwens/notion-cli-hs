@@ -4,6 +4,7 @@
 
 module Notion.GetUserAnalyticsSettings where
 
+import Notion.Config (Config(..))
 import           Control.Exception.Safe (MonadThrow)
 import           Control.Monad.IO.Class
 import           Data.Aeson             (FromJSON (..), ToJSON (..),
