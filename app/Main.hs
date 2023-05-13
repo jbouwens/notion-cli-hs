@@ -43,7 +43,7 @@ getEnvironment = do
   return Environment{..}
 
 
-newtype Config = Config { tokenV2 :: String, userAgent :: String }
+data Config = Config { tokenV2 :: String, userAgent :: String }
   deriving (Show, Eq, Read)
 
 defaultConfigFile :: FilePath -> FilePath
