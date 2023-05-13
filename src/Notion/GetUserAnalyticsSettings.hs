@@ -4,6 +4,7 @@
 
 module Notion.GetUserAnalyticsSettings where
 
+import Main (Config)
 import           Control.Exception.Safe (MonadThrow)
 import           Control.Monad.IO.Class
 import           Data.Aeson             (FromJSON (..), ToJSON (..),
@@ -34,11 +35,6 @@ instance FromJSON ResBody where
 
 endpoint :: URL
 endpoint = "https://www.notion.so/api/v3/getUserAnalyticsSettings"
-
-
-data Config = Config { tokenV2 :: String
-                     , userAgent :: String
-                     } deriving (Show, Eq, Read)
 
 getUserID :: (MonadThrow m, MonadIO m) => Config -> m UUID
 getUserID Config{..} = do
