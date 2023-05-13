@@ -20,7 +20,7 @@ import qualified Data.UUID.V4                       as UUIDv4
 import           GHC.Generics                       (Generic)
 import           Network.HTTP.Simple
 import           Network.Mime                       (defaultMimeLookup)
-import           Notion.GetUserAnalyticsSettings    (getUserID, Config(..))
+import           Notion.GetUserAnalyticsSettings    (getUserID)
 import           Notion.SubmitTransaction.Operation (Arguments (..),
                                                      Operation (..), URL, UUID)
 import qualified Notion.SubmitTransaction.Operation as Op
