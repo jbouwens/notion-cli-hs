@@ -139,18 +139,18 @@ exec env UploadOpts {..} = do
   parentUUID <- case uploadUUID of
                   DBUUID uuid -> do
                     let title = fromMaybe (takeFileName . head  $ uploadFilePathes) uploadRecordTitle
-                    appendRecord token uuid title
+                    appendRecord config uuid title
                   PageUUID uuid -> return uuid
                   PageURL url -> maybe (die "the page URL is invalid") return (getUUID url)
 
-  forM_ uploadDesc (appendText token parentUUID)
+  forM_ uploadDesc (appendText config parentUUID)
 
   forM_ uploadFilePathes $ \filePath -> do
     s3URLs <- getUploadFileUrl token filePath
     let signedPutURL = getS3SignedPutURL s3URLs
     let url = getS3URL s3URLs
     _ <- putFile signedPutURL filePath
-    _ <- appendS3File token parentUUID url
+    _ <- appendS3File config parentUUID url
     putStrLn $ "File: " ++ filePath
     putStrLn $ "S3URL: " ++ show url
 
@@ -161,11 +161,11 @@ exec env AppendTextOpts {..} = do
   parentUUID <- case appendTextUUID of
                   DBUUID uuid -> do
                     let title = fromMaybe "" appendTextRecordTitle
-                    appendRecord token uuid title
+                    appendRecord config uuid title
                   PageUUID uuid -> return uuid
                   PageURL url -> maybe (die "the page URL is invalid") return (getUUID url)
 
-  uuid <- appendText token parentUUID appendTextContent
+  uuid <- appendText config parentUUID appendTextContent
   putStrLn $ "UUID: " ++ uuid
   return ()
 
