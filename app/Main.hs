@@ -43,7 +43,7 @@ getEnvironment = do
   return Environment{..}
 
 
-newtype Config = Config { tokenV2 :: String }
+newtype Config = Config { tokenV2 :: String, userAgent :: String }
   deriving (Show, Eq, Read)
 
 defaultConfigFile :: FilePath -> FilePath
@@ -51,11 +51,12 @@ defaultConfigFile home = home ++ "/.notion-cli.conf"
 
 getConfig :: FilePath -> IO Config
 getConfig filePath = do
-  let handle e = die $ "invalid configration file\n" ++ show e
+  let handle e = die $ "invalid configuration file\n" ++ show e
   val <- readfile emptyCP{optionxform = id} filePath
   either handle return $ do
     cp <- val
     tokenV2 <- get cp "Cookie" "token_v2"
+    userAgent <- get cp "UserAgent" "useragent"
     return Config{..}
 
 

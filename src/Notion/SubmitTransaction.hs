@@ -18,7 +18,7 @@ import qualified Data.UUID.V4                       as UUIDv4
 import           GHC.Generics                       (Generic)
 import           Network.HTTP.Simple
 import           Network.Mime                       (defaultMimeLookup)
-import           Notion.GetUserAnalyticsSettings    (getUserID)
+import           Notion.GetUserAnalyticsSettings    (getUserID, Config(..))
 import           Notion.SubmitTransaction.Operation (Arguments (..),
                                                      Operation (..), URL, UUID)
 import qualified Notion.SubmitTransaction.Operation as Op
@@ -34,9 +34,6 @@ instance ToJSON ReqBody where
 endpoint :: URL
 endpoint = "https://www.notion.so/api/v3/submitTransaction"
 
-userAgent :: String
-userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36"
-
 genUUID :: MonadIO m => m UUID
 genUUID = UUID.toString <$> liftIO UUIDv4.nextRandom
 
@@ -46,38 +43,38 @@ getUnixTime = do
   unixtime <- liftIO $ UT.formatUnixTime "%s" time
   return . read . BC.unpack $ unixtime
 
-post :: (MonadIO m, MonadThrow m) => Token -> [Operation] -> m ()
-post token ops = do
+post :: (MonadIO m, MonadThrow m) => Config -> [Operation] -> m ()
+post Config{..} ops = do
   let body = ReqBody { _reqOperations = ops }
   req <- parseRequest endpoint
   let req' = setRequestMethod "POST"
-           . setRequestHeader "Cookie" [BC.pack $ "token_v2=" ++ token]
+           . setRequestHeader "Cookie" [BC.pack $ "token_v2=" ++ tokenV2]
            . setRequestHeader "User-Agent" [BC.pack userAgent]
            . setRequestBodyJSON body
            $ req
   httpNoBody req'
   return ()
 
-appendRecord :: (MonadIO m, MonadThrow m) => Token -> UUID -> String -> m UUID
-appendRecord token collectionID recordTitle = do
+appendRecord :: (MonadIO m, MonadThrow m) => Config -> UUID -> String -> m UUID
+appendRecord conf collectionID recordTitle = do
   blockID <- genUUID
-  userID <- getUserID token
+  userID <- getUserID conf
   unixTime <- getUnixTime
-  post token $ Op.appendRecord blockID userID unixTime collectionID recordTitle
+  post conf $ Op.appendRecord blockID userID unixTime collectionID recordTitle
   return blockID
 
-appendS3File :: (MonadIO m, MonadThrow m) => Token -> UUID -> URL -> m UUID
-appendS3File token pageID url = do
+appendS3File :: (MonadIO m, MonadThrow m) => Config -> UUID -> URL -> m UUID
+appendS3File conf pageID url = do
   blockID <- genUUID
-  userID <- getUserID token
+  userID <- getUserID conf
   unixTime <- getUnixTime
-  post token $ Op.appendS3File blockID userID unixTime pageID url
+  post conf $ Op.appendS3File blockID userID unixTime pageID url
   return blockID
 
-appendText :: (MonadIO m, MonadThrow m) => Token -> UUID -> String -> m UUID
-appendText token pageID content = do
+appendText :: (MonadIO m, MonadThrow m) => Config -> UUID -> String -> m UUID
+appendText conf pageID content = do
   blockID <- genUUID
-  userID <- getUserID token
+  userID <- getUserID conf
   unixTime <- getUnixTime
-  post token $ Op.appendText blockID userID unixTime pageID content
+  post conf $ Op.appendText blockID userID unixTime pageID content
   return blockID
